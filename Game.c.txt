@@ -1,0 +1,134 @@
+// including libraries
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// defining constants
+#define POINTS_INITIAL 1000.0
+#define TRIES_EASY 20
+#define TRIES_MEDIUM 14
+#define TRIES_HARD 6
+
+int main() {
+
+    // printing a nice game header
+    printf("\n\n");
+    printf("          P  /_\\  P                              \n");
+    printf("         /_\\_|_|_/_\\                            \n");
+    printf("     n_n | ||. .|| | n_n         Welcome to the   \n");
+    printf("     |_|_|nnnn nnnn|_|_|     Guessing Game!       \n");
+    printf("    |\" \"  |  |_|  |\"  \" |                     \n");
+    printf("    |_____| ' _ ' |_____|                         \n");
+    printf("          \\__|_|__/                              \n");
+    printf("\n\n");
+
+    // declaring variables to be used later
+    int guess, correct, level, totaltries, limit, lastguess = -1;
+    char playagain;
+
+    // defining the initial score
+    double score = POINTS_INITIAL;
+
+    do {
+        printf("-> Select a number limit you want (2 to 1000): ");
+        scanf("%d", &limit);
+
+        if (limit <= 1) {
+            printf("The limit must be greater than 1. Please try again.\n");
+            continue;
+        }
+
+        // generating a random secret number
+        srand(time(0));
+        int secretnumber = rand() % limit;
+
+        // choosing the difficulty level
+        printf("Choose a difficulty level!\n");
+        printf("(1) Easy (2) Medium (3) Hard\n\n");
+        printf("Choice: ");
+        scanf("%d", &level);
+
+        switch (level) {
+            case 1:
+                totaltries = TRIES_EASY;
+                break;
+            case 2:
+                totaltries = TRIES_MEDIUM;
+                break;
+            default:
+                totaltries = TRIES_HARD;
+                break;
+        }
+
+        // main game loop
+        correct = 0;  // Reset correct flag for each game
+        lastguess = -1;  // Reset the last guess for each game
+
+        for (int i = 1; i <= totaltries; i++) {
+            printf("-> Attempt %d of %d\n", i, totaltries);
+            printf("Guess a number: ");
+            scanf("%d", &guess);
+
+            // handling invalid guesses
+            if (guess < 0) {
+                printf("You cannot guess negative numbers. Try again.\n");
+                continue;
+            }
+            if (guess == lastguess) {
+                printf("You can't guess repeated numbers! Try again.\n");
+                i--;
+                continue;
+            }
+            lastguess = guess;
+
+            // checking if the guess is correct, too high, or too low
+            if (guess == secretnumber) {
+                correct = 1;
+                break;
+            } else if (guess > secretnumber) {
+                printf("\nYour guess was higher than the secret number!\n\n");
+            } else {
+                printf("\nYour guess was lower than the secret number!\n\n");
+            }
+
+            // calculating score loss
+            double pointslost = abs(guess - secretnumber) / 2.0;
+            score -= pointslost;
+        }
+
+        // printing win or lose message
+        printf("\n");
+        if (correct) {
+            printf("             OOOOOOOOOOO               \n");
+            printf("         OOOOOOOOOOOOOOOOOOO           \n");
+            printf("      OOOOOO  OOOOOOOOO  OOOOOO        \n");
+            printf("    OOOOOO      OOOOO      OOOOOO      \n");
+            printf("  OOOOOOOO  #   OOOOO  #   OOOOOOOO    \n");
+            printf(" OOOOOOOOOO    OOOOOOO    OOOOOOOOOO   \n");
+            printf("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO  \n");
+            printf("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO  \n");
+            printf("OOOO  OOOOOOOOOOOOOOOOOOOOOOOOO  OOOO  \n");
+            printf(" OOOO  OOOOOOOOOOOOOOOOOOOOOOO  OOOO   \n");
+            printf("  OOOO   OOOOOOOOOOOOOOOOOOOO  OOOO    \n");
+            printf("    OOOOO   OOOOOOOOOOOOOOO   OOOO     \n");
+            printf("      OOOOOO   OOOOOOOOO   OOOOOO      \n");
+            printf("         OOOOOO         OOOOOO         \n");
+            printf("             OOOOOOOOOOOO              \n");
+            printf("\nCongratulations! You got it right!\n");
+            printf("You scored %.2f points. See you next time!\n\n", score);
+        } else {
+            printf("       \\|/ ____ \\|/    \n");
+            printf("        @~/ ,. \\~@      \n");
+            printf("       /_( \\__/ )_\\    \n");
+            printf("          \\__U_/        \n");
+            printf("\nYou lost! Try again!\n\n");
+        }
+
+        printf("-> Do you want to play again? (y/n): ");
+        scanf(" %c", &playagain);
+
+    } while (playagain == 'y' || playagain == 'Y');
+
+    printf("\nThanks for playing the game!\n");
+    return 0;
+}
